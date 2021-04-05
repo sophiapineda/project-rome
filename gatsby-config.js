@@ -5,6 +5,27 @@ module.exports = {
     author: `@gatsbyjs`,
   },
   plugins: [
+    {
+      resolve: "gatsby-plugin-firebase",
+      options: {
+        credentials: {
+          apiKey: "AIzaSyDrOtOOuRvHXZ8g6FXvrKdgB2LhE6k_FZc",
+          authDomain: "test-e1595.firebaseapp.com",
+          // databaseURL: "<YOUR_FIREBASE_DATABASE_URL>",
+          projectId: "test-e1595",
+          storageBucket: "test-e1595.appspot.com",
+          messagingSenderId: "111794591330",
+          appId: "1:111794591330:web:33cc85c3c1e0034955a33b",
+        }
+      }
+    },
+  //   apiKey: "AIzaSyDrOtOOuRvHXZ8g6FXvrKdgB2LhE6k_FZc",
+  // authDomain: "test-e1595.firebaseapp.com",
+  // projectId: "test-e1595",
+  // storageBucket: "test-e1595.appspot.com",
+  // messagingSenderId: "111794591330",
+  // appId: "1:111794591330:web:33cc85c3c1e0034955a33b",
+  // measurementId: "G-8SSVJH778K"
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-image`,
     {
