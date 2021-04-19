@@ -1,11 +1,13 @@
 import React, { useState } from "react"
 
-function ToDoRow({ toDo: { title } }) {
-  const [userInput, setUserInput] = useState("")
+function ToDoRow({ toDo, submitToDo, deleteToDo }) {
+  const { title } = toDo
 
+  const [userInput, setUserInput] = useState("")
   const [isEditMode, setIsEditMode] = useState(false)
 
   const submitEditToDo = () => {
+    submitToDo(toDo, userInput)
     setIsEditMode(false)
   }
 
@@ -14,26 +16,37 @@ function ToDoRow({ toDo: { title } }) {
     setUserInput(title)
   }
 
+  const submitDeleteToDo = () => {
+    deleteToDo(toDo)
+  }
+
   return (
-    <div>
+    <li className="list-group-item d-flex justify-content-between align-items-center">
+  
       {!isEditMode && (
-        <span>
+        <>
           {title}
-          <button onClick={() => activateEditMode()}>edit</button>
-        </span>
+          <span className="badge">
+            <button onClick={() => activateEditMode()} className="btn btn-warning mr-2">Edit</button>
+            <button onClick={() => submitDeleteToDo()} className="btn btn-danger">Delete</button>
+          </span>
+        </>
       )}
       {isEditMode && (
-        <span>
+        <>
           <input
+            className="form-control"
             type="text"
             value={userInput}
             onChange={event => setUserInput(event.target.value)}
           />
-          <button onClick={() => submitEditToDo()}>save</button>
-          <button onClick={() => setIsEditMode(false)}>cancel</button>
-        </span>
+          <span className="badge">
+            <button onClick={() => submitEditToDo()} className="btn btn-success mr-2">Save</button>
+            <button onClick={() => setIsEditMode(false)} className="btn btn-danger">Cancel</button>
+          </span>
+        </>
       )}
-    </div>
+    </li>
   )
 }
 

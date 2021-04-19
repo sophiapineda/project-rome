@@ -9,9 +9,8 @@ import ToDoInput from "../components/ToDoInput"
 import ToDoRow from "../components/ToDoRow"
 import { doc } from "prettier"
 
-const db = firebase.firestore()
-
 const toDo = function ({ title }) {
+  this.id = Date.now()
   this.title = title
 }
 
@@ -20,62 +19,59 @@ const IndexPage = () => {
   const [userInput, setUserInput] = useState("")
 
   useEffect(() => {
-    db.collection("todos")
-      .get()
-      .then(querySnapshot => {
-        const data = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        setToDoList(data)
-      })
-  })
-  // useEffect(() => {
-  //   db.collection("todos")
-  //     .get()
-  //     .then(querySnapshot => {
-  //       console.log("data", querySnapshot)
-  //       setToDoList(querySnapshot.forEach(snap => ({ id: doc.id, ...doc.data() })))
-  //       // querySnapshot.forEach((doc) => {
-  //       //     // doc.data() is never undefined for query doc snapshots
-  //       //     console.log(doc.id, " => ", doc.data());
-  //       // });
-  //     })
-  //     .catch(error => {
-  //       console.log("Error getting documents: ", error)
-  //     })
-  // }, [])
+    const dataInStorage = localStorage.getItem("toDoList")
+    setToDoList(dataInStorage ? JSON.parse(dataInStorage).toDoList : [])
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("toDoList", JSON.stringify({ toDoList }))
+  }, [toDoList])
 
   const addToDo = () => {
-    db.collection("todos")
-      .add({
-        title: userInput,
-        isCompleted: false,
-      })
-      .then(docRef => {
-        console.log("Document written with ID: ", docRef.id)
-      })
-      .catch(error => {
-        console.error("Error adding document: ", error)
-      })
-      setUserInput("")
-    // setToDoList(prevToDoList => [
-    //   ...prevToDoList,
-    //   new toDo({ title: userInput }),
-    // ])
+    setUserInput("")
+    setToDoList(prevToDoList => [
+      ...prevToDoList,
+      new toDo({ title: userInput }),
+    ])
+  }
+  const submitToDo = (toDo, userInput) => {
+    const newToDoList = [...toDoList]
+    newToDoList.filter(t => t === toDo)[0].title = userInput
+    setToDoList(newToDoList)
+  }
+
+  const deleteToDo = toDo => {
+    const newToDoList = [...toDoList]
+    newToDoList.splice(newToDoList.indexOf(toDo), 1)
+    setToDoList(newToDoList)
   }
 
   return (
     <Layout>
       <SEO title="Home" />
-      <ToDoInput
-        userInput={userInput}
-        setUserInput={setUserInput}
-        addToDo={addToDo}
-      />
-      {toDoList.map(t => (
-        <ToDoRow toDo={t} key={t.id} />
-      ))}
+
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-md-12">
+            <ToDoInput
+              userInput={userInput}
+              setUserInput={setUserInput}
+              addToDo={addToDo}
+            />
+            <ul className="list-group">
+              {toDoList.map(t => (
+                <ToDoRow
+                  toDo={t}
+                  key={t.id}
+                  submitToDo={submitToDo}
+                  deleteToDo={deleteToDo}
+                />
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* <h1>Hi people</h1>
     <p>Welcome to your new Gatsby site.</p>
     <p>Now go build something great.</p>
